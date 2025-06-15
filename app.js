@@ -10,9 +10,10 @@ const authRoutes = require('./routes/authRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const userRoutes = require('./routes/userRoutes');
+const adminRoutes = require('./routes/adminRoutes'); // ✅ nueva ruta admin
 
-// ✅ Importar modelos y relaciones (en lugar de cada uno por separado)
-require('./models'); // ← importa User, Recipe, Favorite y define relaciones
+// ✅ Importar todos los modelos y relaciones
+require('./models'); // incluye User, Recipe, Favorite y ahora Admin también
 
 app.use(cors());
 app.use(express.json());
@@ -21,10 +22,11 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/favorites', favoriteRoutes);
-app.use('/api/user', userRoutes); // ✅ ruta de perfil
+app.use('/api/user', userRoutes);
+app.use('/api/admin', adminRoutes); // ✅ montar ruta de admin
 
-// 🔄 Sincronizar base de datos conservando datos existentes (modo seguro)
-sequelize.sync({ alter: true }) // ✅ ahora usamos alter: true
+// 🔄 Sincronizar base de datos conservando datos existentes
+sequelize.sync({ alter: true })
   .then(() => {
     console.log('✅ Base de datos conectada');
     const port = process.env.PORT || 3001;
