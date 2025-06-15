@@ -1,4 +1,18 @@
-sequelize.sync({ alter: true }) // Para que adapte tablas sin borrarlas
+const express = require('express');
+const cors = require('cors');
+const app = express();
+require('dotenv').config();
+
+const sequelize = require('./config/database'); // ✅ Primero importa sequelize
+const authRoutes = require('./routes/authRoutes');
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/api/auth', authRoutes);
+
+// ✅ Aquí va sequelize.sync() después de importarlo
+sequelize.sync({ alter: true })
   .then(() => {
     console.log('✅ Base de datos conectada');
     const port = process.env.PORT || 3001;
