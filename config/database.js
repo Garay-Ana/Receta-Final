@@ -1,14 +1,14 @@
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize(
-  'bpovcb9nrlovxdfwk58d',           // Nombre de la base de datos
-  'ulbvcrnceyhufsz',                // Usuario
-  'Rsri9MOWOcGMWdExoGfd',           // Contraseña
+  'recetaya_db',                  // Nombre de la base de datos
+  'recetaya_db_user',             // Usuario
+  'FeCee4VqIfS94pF5UZWTTzreESW5eZch', // Contraseña
   {
-    host: 'bpovcb9nrlovxdfwk58d-mysql.services.clever-cloud.com',
-    dialect: 'mysql',
-    port: 3306,
-    logging: false,
+    host: 'dpg-d17g2gh5pdvs738bj1vg-a', // Host
+    dialect: 'postgres',               // Tipo de base de datos
+    port: 5432,                        // Puerto estándar de PostgreSQL
+    logging: false,                    // Desactiva logs SQL
   }
 );
 
