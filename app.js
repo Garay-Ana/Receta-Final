@@ -11,8 +11,8 @@ const recipeRoutes = require('./routes/recipeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const userRoutes = require('./routes/userRoutes');
 
-// ✅ Importar modelos y relaciones (en lugar de importar cada uno por separado)
-require('./models'); // ← importa automáticamente User, Recipe, Favorite y relaciones
+// ✅ Importar modelos y relaciones (en lugar de cada uno por separado)
+require('./models'); // ← importa User, Recipe, Favorite y define relaciones
 
 app.use(cors());
 app.use(express.json());
@@ -23,10 +23,10 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/user', userRoutes); // ✅ ruta de perfil
 
-// Conectar a la base de datos
-sequelize.sync({ alter: true }) // usa force: true solo si quieres borrar todo y empezar
+// 🔧 Sincronizar base de datos y recrear todo desde cero TEMPORALMENTE
+sequelize.sync({ force: true }) // ⚠️ ¡Esto eliminará TODAS las tablas existentes!
   .then(() => {
-    console.log('✅ Base de datos conectada');
+    console.log('✅ Base de datos conectada (FORCE: true)');
     const port = process.env.PORT || 3001;
     app.listen(port, () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
