@@ -46,3 +46,16 @@ exports.create = async (req, res) => {
     res.status(500).json({ error: 'Error al crear la receta', details: err.message });
   }
 };
+
+// ✅ NUEVO: eliminar receta
+exports.delete = async (req, res) => {
+  try {
+    const recipe = await Recipe.findByPk(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    await recipe.destroy();
+    res.json({ message: 'Receta eliminada correctamente' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar receta', details: err.message });
+  }
+};
