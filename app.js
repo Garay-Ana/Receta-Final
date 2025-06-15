@@ -3,16 +3,19 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 
-const sequelize = require('./config/database'); // ✅ Primero importa sequelize
+const sequelize = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
+const recipeRoutes = require('./routes/recipeRoutes'); // ✅ Importar rutas de recetas
+
+require('./models/Recipe'); // ✅ Importar modelo para que sequelize lo registre
 
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/recipes', recipeRoutes); // ✅ Montar las rutas de recetas
 
-// ✅ Aquí va sequelize.sync() después de importarlo
-sequelize.sync({ alter: true })
+sequelize.sync({ alter: true }) // o { force: true } si es la primera vez y quieres forzar
   .then(() => {
     console.log('✅ Base de datos conectada');
     const port = process.env.PORT || 3001;
