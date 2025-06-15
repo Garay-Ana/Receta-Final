@@ -47,7 +47,20 @@ exports.create = async (req, res) => {
   }
 };
 
-// ✅ NUEVO: eliminar receta
+exports.update = async (req, res) => {
+  try {
+    const recipe = await Recipe.findByPk(req.params.id);
+    if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    const { title, description, ingredients, instructions, prepTime } = req.body;
+    await recipe.update({ title, description, ingredients, instructions, prepTime });
+
+    res.json({ message: 'Receta actualizada correctamente', recipe });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al actualizar receta', details: err.message });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
