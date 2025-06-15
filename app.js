@@ -1,3 +1,5 @@
+// app.js
+
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -15,6 +17,7 @@ const adminRoutes = require('./routes/adminRoutes'); // ✅ nueva ruta admin
 // ✅ Importar todos los modelos y relaciones
 require('./models'); // incluye User, Recipe, Favorite y ahora Admin también
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
