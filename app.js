@@ -1,20 +1,4 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
-require('dotenv').config();
-
-const sequelize = require('./config/database');
-const authRoutes = require('./routes/authRoutes');
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
-// Rutas
-app.use('/api/auth', authRoutes);
-
-// Conectar a la base de datos y lanzar servidor
-sequelize.sync()
+sequelize.sync({ alter: true }) // Para que adapte tablas sin borrarlas
   .then(() => {
     console.log('✅ Base de datos conectada');
     const port = process.env.PORT || 3001;
