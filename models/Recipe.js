@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User'); // ✅ importar User para relación
 
 const Recipe = sequelize.define('Recipe', {
   id: {
@@ -36,7 +35,10 @@ const Recipe = sequelize.define('Recipe', {
   timestamps: true,
 });
 
-// ✅ Asociación: cada receta pertenece a un usuario
+// ✅ Importar User después de definir Recipe
+const User = require('./User');
+
+// ✅ Asociar después de importar
 Recipe.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = Recipe;
