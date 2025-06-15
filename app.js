@@ -23,10 +23,10 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/user', userRoutes); // ✅ ruta de perfil
 
-// 🔧 Sincronizar base de datos y recrear todo desde cero TEMPORALMENTE
-sequelize.sync({ force: true }) // ⚠️ ¡Esto eliminará TODAS las tablas existentes!
+// 🔄 Sincronizar base de datos conservando datos existentes (modo seguro)
+sequelize.sync({ alter: true }) // ✅ ahora usamos alter: true
   .then(() => {
-    console.log('✅ Base de datos conectada (FORCE: true)');
+    console.log('✅ Base de datos conectada');
     const port = process.env.PORT || 3001;
     app.listen(port, () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
