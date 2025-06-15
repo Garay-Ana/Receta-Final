@@ -24,3 +24,25 @@ exports.getOne = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener receta' });
   }
 };
+
+exports.create = async (req, res) => {
+  const { title, description, ingredients, instructions, prepTime } = req.body;
+
+  if (!title || !description || !ingredients || !instructions || !prepTime) {
+    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+  }
+
+  try {
+    const recipe = await Recipe.create({
+      title,
+      description,
+      ingredients,
+      instructions,
+      prepTime,
+    });
+
+    res.status(201).json({ message: 'Receta creada correctamente', recipe });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al crear la receta', details: err.message });
+  }
+};

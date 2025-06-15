@@ -4,5 +4,6 @@ const recipeController = require('../controllers/recipeController');
 
 router.get('/search', recipeController.search);
 router.get('/:id', recipeController.getOne);
+router.post('/', recipeController.create); // ✅ Agregar esta línea
 
 module.exports = router;
