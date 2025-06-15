@@ -1,7 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const User = require('./User'); // ✅ importar User para relación
 
 const Recipe = sequelize.define('Recipe', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   title: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,7 +17,7 @@ const Recipe = sequelize.define('Recipe', {
     allowNull: false,
   },
   ingredients: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // PostgreSQL admite ARRAY
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   instructions: {
@@ -22,6 +28,15 @@ const Recipe = sequelize.define('Recipe', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  }
+}, {
+  timestamps: true,
 });
+
+// ✅ Asociación: cada receta pertenece a un usuario
+Recipe.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = Recipe;
