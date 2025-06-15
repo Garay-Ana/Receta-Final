@@ -35,10 +35,4 @@ const Recipe = sequelize.define('Recipe', {
   timestamps: true,
 });
 
-// ✅ Importar User después de definir Recipe
-const User = require('./User');
-
-// ✅ Asociar después de importar
-Recipe.belongsTo(User, { foreignKey: 'userId' });
-
 module.exports = Recipe;

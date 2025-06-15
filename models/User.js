@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Recipe = require('./Recipe'); // ✅ importar el modelo Recipe
 
 const User = sequelize.define('User', {
   id: {
@@ -24,8 +23,5 @@ const User = sequelize.define('User', {
 }, {
   timestamps: true,
 });
-
-// ✅ Asociación: un usuario tiene muchas recetas
-User.hasMany(Recipe, { foreignKey: 'userId', onDelete: 'CASCADE' });
 
 module.exports = User;

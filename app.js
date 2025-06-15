@@ -9,12 +9,10 @@ const sequelize = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
-const userRoutes = require('./routes/userRoutes'); // ✅ importar rutas de usuario
+const userRoutes = require('./routes/userRoutes');
 
-// Importar modelos (deben ir todos para registrar relaciones)
-require('./models/User');      // ✅ ¡IMPORTANTE!
-require('./models/Recipe');
-require('./models/Favorite');
+// ✅ Importar modelos y relaciones (en lugar de importar cada uno por separado)
+require('./models'); // ← importa automáticamente User, Recipe, Favorite y relaciones
 
 app.use(cors());
 app.use(express.json());
@@ -26,7 +24,7 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/user', userRoutes); // ✅ ruta de perfil
 
 // Conectar a la base de datos
-sequelize.sync({ alter: true }) // o force: true si estás desarrollando desde cero
+sequelize.sync({ alter: true }) // usa force: true solo si quieres borrar todo y empezar
   .then(() => {
     console.log('✅ Base de datos conectada');
     const port = process.env.PORT || 3001;
