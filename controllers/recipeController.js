@@ -13,7 +13,7 @@ exports.search = async (req, res) => {
       },
       order: [['createdAt', 'DESC']]
     });
-    res.json({ recipes }); // ✅ imageUrl ya está incluido
+    res.json({ recipes });
   } catch (err) {
     res.status(500).json({ error: 'Error al buscar recetas' });
   }
@@ -40,7 +40,7 @@ exports.create = async (req, res) => {
   }
 
   try {
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.filename : null;
 
     const recipe = await Recipe.create({
       title,
@@ -73,10 +73,10 @@ exports.update = async (req, res) => {
     if (req.file) {
       // Eliminar imagen anterior si existe
       if (imageUrl) {
-        const previousPath = path.join(__dirname, '..', imageUrl);
+        const previousPath = path.join(__dirname, '..', 'uploads', imageUrl);
         if (fs.existsSync(previousPath)) fs.unlinkSync(previousPath);
       }
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = req.file.filename;
     }
 
     await recipe.update({
@@ -101,7 +101,7 @@ exports.delete = async (req, res) => {
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     if (recipe.imageUrl) {
-      const imagePath = path.join(__dirname, '..', recipe.imageUrl);
+      const imagePath = path.join(__dirname, '..', 'uploads', recipe.imageUrl);
       if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
     }
 
