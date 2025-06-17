@@ -2,31 +2,31 @@ const express = require('express');
 const router = express.Router();
 const recipeController = require('../controllers/recipeController');
 const authMiddleware = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const upload = require('../middleware/uploadMiddleware'); // ✅ debe usar multer con Cloudinary
 
-// Rutas públicas
+// 🟢 Rutas públicas
 router.get('/search', recipeController.search);
 router.get('/:id', recipeController.getOne);
 
-// Rutas protegidas (requieren token de autenticación)
+// 🔐 Rutas protegidas con autenticación de usuario
 router.post(
   '/',
   authMiddleware,
-  upload.single('image'),        // ✅ permite subir imagen al crear
+  upload.single('image'), // ✅ sube imagen a Cloudinary
   recipeController.create
 );
 
 router.put(
   '/:id',
   authMiddleware,
-  upload.single('image'),        // ✅ permite subir nueva imagen al editar
+  upload.single('image'), // ✅ permite actualizar imagen
   recipeController.update
 );
 
 router.delete(
   '/:id',
   authMiddleware,
-  recipeController.delete        // ✅ eliminar receta por ID
+  recipeController.delete // ✅ elimina receta por ID
 );
 
 module.exports = router;

@@ -1,7 +1,5 @@
 const Recipe = require('../models/Recipe');
 const { Op } = require('sequelize');
-const path = require('path');
-const fs = require('fs');
 
 // Buscar recetas por título (público)
 exports.search = async (req, res) => {
@@ -30,7 +28,7 @@ exports.getOne = async (req, res) => {
   }
 };
 
-// Crear una receta con imagen (privado)
+// Crear una receta con imagen (usando Cloudinary)
 exports.create = async (req, res) => {
   const { title, description, ingredients, instructions, prepTime } = req.body;
   const userId = req.user?.id;
@@ -40,7 +38,7 @@ exports.create = async (req, res) => {
   }
 
   try {
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.path : null;
 
     const recipe = await Recipe.create({
       title,
@@ -61,23 +59,14 @@ exports.create = async (req, res) => {
   }
 };
 
-// Actualizar una receta (privado)
+// Actualizar una receta (imagen nueva en Cloudinary)
 exports.update = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const { title, description, ingredients, instructions, prepTime } = req.body;
-    let imageUrl = recipe.imageUrl;
-
-    if (req.file) {
-      // Eliminar imagen anterior si existe
-      if (imageUrl) {
-        const previousPath = path.join(__dirname, '..', imageUrl); // ya incluye "/uploads/"
-        if (fs.existsSync(previousPath)) fs.unlinkSync(previousPath);
-      }
-      imageUrl = `/uploads/${req.file.filename}`;
-    }
+    const imageUrl = req.file ? req.file.path : recipe.imageUrl;
 
     await recipe.update({
       title,
@@ -94,16 +83,13 @@ exports.update = async (req, res) => {
   }
 };
 
-// Eliminar una receta (privado)
+// Eliminar una receta (sin borrar imagen en Cloudinary)
 exports.delete = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
-    if (recipe.imageUrl) {
-      const imagePath = path.join(__dirname, '..', recipe.imageUrl); // usa imageUrl directo
-      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
-    }
+    // Si quieres borrar la imagen de Cloudinary, aquí puedes hacerlo luego
 
     await recipe.destroy();
     res.json({ message: 'Receta eliminada correctamente' });
