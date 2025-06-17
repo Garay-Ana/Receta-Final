@@ -1,5 +1,7 @@
 const Recipe = require('../models/Recipe');
 const { Op } = require('sequelize');
+const path = require('path');
+const fs = require('fs');
 
 // Buscar recetas por título (público)
 exports.search = async (req, res) => {
@@ -27,19 +29,17 @@ exports.getOne = async (req, res) => {
   }
 };
 
-// Crear una receta (requiere autenticación)
+// Crear una receta con imagen
 exports.create = async (req, res) => {
   const { title, description, ingredients, instructions, prepTime } = req.body;
+  const userId = req.user?.id;
 
   if (!title || !description || !ingredients || !instructions || !prepTime) {
     return res.status(400).json({ error: 'Todos los campos son obligatorios' });
   }
 
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ error: 'No autorizado. Falta userId' });
-    }
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const recipe = await Recipe.create({
       title,
@@ -47,7 +47,8 @@ exports.create = async (req, res) => {
       ingredients,
       instructions,
       prepTime,
-      userId // Relación con el usuario creador
+      userId,
+      imageUrl
     });
 
     res.status(201).json({ message: 'Receta creada correctamente', recipe });
@@ -59,14 +60,25 @@ exports.create = async (req, res) => {
   }
 };
 
-// Actualizar una receta
+// Actualizar una receta con posible cambio de imagen
 exports.update = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
 
     const { title, description, ingredients, instructions, prepTime } = req.body;
-    await recipe.update({ title, description, ingredients, instructions, prepTime });
+    let imageUrl = recipe.imageUrl;
+
+    if (req.file) {
+      // Eliminar imagen anterior si existe
+      if (imageUrl) {
+        const previousPath = path.join(__dirname, '..', imageUrl);
+        if (fs.existsSync(previousPath)) fs.unlinkSync(previousPath);
+      }
+      imageUrl = `/uploads/${req.file.filename}`;
+    }
+
+    await recipe.update({ title, description, ingredients, instructions, prepTime, imageUrl });
 
     res.json({ message: 'Receta actualizada correctamente', recipe });
   } catch (err) {
@@ -79,6 +91,12 @@ exports.delete = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
     if (!recipe) return res.status(404).json({ error: 'Receta no encontrada' });
+
+    // Eliminar imagen física si existe
+    if (recipe.imageUrl) {
+      const imagePath = path.join(__dirname, '..', recipe.imageUrl);
+      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    }
 
     await recipe.destroy();
     res.json({ message: 'Receta eliminada correctamente' });

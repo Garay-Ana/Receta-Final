@@ -1,7 +1,6 @@
-// app.js
-
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); // ✅ Importar path para servir archivos estáticos
 const app = express();
 require('dotenv').config();
 
@@ -21,12 +20,15 @@ require('./models'); // incluye User, Recipe, Favorite y ahora Admin también
 app.use(cors());
 app.use(express.json());
 
+// ✅ Servir imágenes estáticas desde /uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // ← ESTA LÍNEA ES CLAVE
+
 // Rutas del API
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/user', userRoutes);
-app.use('/api/admin', adminRoutes); // ✅ montar ruta de admin
+app.use('/api/admin', adminRoutes);
 
 // 🔄 Sincronizar base de datos conservando datos existentes
 sequelize.sync({ alter: true })
