@@ -1,12 +1,15 @@
-// routes/adminRoutes.js
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const Admin = require('../models/Admin');
 const adminController = require('../controllers/adminController');
+const adminMiddleware = require('../middleware/adminMiddleware'); // ✅ Importa tu middleware
 
 // 🟢 Ruta para login de admin
 router.post('/login', adminController.login);
+
+// 🟢 Ruta protegida para obtener datos del dashboard
+router.get('/dashboard', adminMiddleware, adminController.dashboard);
 
 // ⚠️ Ruta temporal para crear un admin (BORRAR después de usar)
 router.post('/create-temp', async (req, res) => {
