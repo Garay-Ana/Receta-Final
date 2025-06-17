@@ -11,6 +11,7 @@ exports.search = async (req, res) => {
       where: {
         title: { [Op.iLike]: `%${q}%` },
       },
+      order: [['createdAt', 'DESC']]
     });
     res.json({ recipes });
   } catch (err) {
@@ -29,7 +30,7 @@ exports.getOne = async (req, res) => {
   }
 };
 
-// Crear una receta con imagen
+// Crear una receta con imagen (privado)
 exports.create = async (req, res) => {
   const { title, description, ingredients, instructions, prepTime } = req.body;
   const userId = req.user?.id;
@@ -60,7 +61,7 @@ exports.create = async (req, res) => {
   }
 };
 
-// Actualizar una receta con posible cambio de imagen
+// Actualizar una receta (privado)
 exports.update = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
@@ -78,7 +79,14 @@ exports.update = async (req, res) => {
       imageUrl = `/uploads/${req.file.filename}`;
     }
 
-    await recipe.update({ title, description, ingredients, instructions, prepTime, imageUrl });
+    await recipe.update({
+      title,
+      description,
+      ingredients,
+      instructions,
+      prepTime,
+      imageUrl
+    });
 
     res.json({ message: 'Receta actualizada correctamente', recipe });
   } catch (err) {
@@ -86,7 +94,7 @@ exports.update = async (req, res) => {
   }
 };
 
-// Eliminar una receta
+// Eliminar una receta (privado)
 exports.delete = async (req, res) => {
   try {
     const recipe = await Recipe.findByPk(req.params.id);
